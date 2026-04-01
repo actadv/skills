@@ -2,7 +2,7 @@
 name: develop
 description: Spawn parallel agents to claim and implement the oldest open GitHub issues using TDD and clean code
 user-invocable: true
-argument-hint: [max-agents (1-5, default 5)]
+argument-hint: [max-agents (1-3, default 3)]
 allowed-tools: Bash(gh *), Bash(git *), Agent, Read, Grep, Glob
 ---
 
@@ -57,7 +57,11 @@ For each PR, spawn an **Agent** with `run_in_background: true`:
 >
 > **d. Approve or escalate**
 >
-> If solid: `gh pr review $PR_NUMBER --approve --body "Reviewed and cleaned up. LGTM."`
+> If solid:
+> ```bash
+> gh pr review $PR_NUMBER --approve --body "Reviewed and cleaned up. LGTM."
+> gh pr merge $PR_NUMBER --squash --delete-branch --auto
+> ```
 >
 > If fundamentally broken (wrong approach, missing requirements):
 > ```bash
@@ -71,7 +75,7 @@ For each PR, spawn an **Agent** with `run_in_background: true`:
 gh issue list --state open --assignee "" --json number,title,body,labels --sort created --limit 20
 ```
 
-Filter out `human` and `in-progress` labels. Take the oldest N issues (N = `$ARGUMENTS`, default 5, max 5) minus any review agents spawned in Step 1.
+Filter out `human` and `in-progress` labels. Take the oldest N issues (N = `$ARGUMENTS`, default 3, max 3) minus any review agents spawned in Step 1.
 
 If no workable issues and no review agents were spawned, tell the user and stop.
 
