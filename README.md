@@ -6,7 +6,7 @@ A Claude Code plugin marketplace with curated skills for software development.
 
 | Plugin | Skills | Description |
 |--------|--------|-------------|
-| **developer** | `review`, `security-audit`, `develop` | Code review, security audit, and parallel issue development |
+| **actadv** | `review`, `security-audit`, `develop` | Code review, security audit, and parallel issue development |
 | **git-workflow** | `smart-commit`, `pr-create`, `changelog` | Smart commits, PRs, and changelogs |
 | **documentation** | `generate-docs`, `explain` | Generate docs and explain code |
 
@@ -27,9 +27,9 @@ Install a plugin:
 Use a skill:
 
 ```
-/developer:review src/api/
-/developer:security-audit
-/developer:develop 3
+/actadv:review src/api/
+/actadv:security-audit
+/actadv:develop 3
 /git-workflow:smart-commit
 /git-workflow:pr-create main
 /git-workflow:changelog v1.0.0

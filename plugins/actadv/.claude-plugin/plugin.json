@@ -1,0 +1,10 @@
+{
+  "name": "actadv",
+  "description": "actadv skills: code review, security audit, parallel issue development, interactive human collaboration, and issue listing",
+  "version": "1.0.0",
+  "author": {
+    "name": "actadv",
+    "email": "clawdie@icloud.com"
+  },
+  "repository": "https://github.com/actadv/skills"
+}

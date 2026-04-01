@@ -10,8 +10,8 @@
   },
   "plugins": [
     {
-      "name": "developer",
-      "source": "./plugins/developer",
+      "name": "actadv",
+      "source": "./plugins/actadv",
       "description": "Code review, security audit, and parallel issue development",
       "version": "1.0.0",
       "author": { "name": "actadv" },
