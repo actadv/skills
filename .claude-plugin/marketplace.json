@@ -10,14 +10,14 @@
   },
   "plugins": [
     {
-      "name": "code-review",
-      "source": "./plugins/code-review",
-      "description": "Deep code review and security auditing skills",
+      "name": "developer",
+      "source": "./plugins/developer",
+      "description": "Code review, security audit, and parallel issue development",
       "version": "1.0.0",
       "author": { "name": "actadv" },
-      "keywords": ["review", "quality", "security", "audit"],
+      "keywords": ["review", "security", "develop", "tdd", "issues"],
       "license": "MIT",
-      "category": "quality"
+      "category": "development"
     },
     {
       "name": "git-workflow",
@@ -38,26 +38,6 @@
       "keywords": ["docs", "documentation", "explain", "readme"],
       "license": "MIT",
       "category": "documentation"
-    },
-    {
-      "name": "testing",
-      "source": "./plugins/testing",
-      "description": "Write tests and analyze coverage gaps",
-      "version": "1.0.0",
-      "author": { "name": "actadv" },
-      "keywords": ["test", "coverage", "unit-test", "integration-test"],
-      "license": "MIT",
-      "category": "testing"
-    },
-    {
-      "name": "refactor",
-      "source": "./plugins/refactor",
-      "description": "Guided refactoring and code simplification",
-      "version": "1.0.0",
-      "author": { "name": "actadv" },
-      "keywords": ["refactor", "simplify", "clean-code", "dry"],
-      "license": "MIT",
-      "category": "quality"
     }
   ]
 }

@@ -1,0 +1,10 @@
+{
+  "name": "developer",
+  "description": "Developer skills: code review, security audit, and parallel issue development",
+  "version": "1.0.0",
+  "author": {
+    "name": "actadv",
+    "email": "clawdie@icloud.com"
+  },
+  "repository": "https://github.com/actadv/skills"
+}
