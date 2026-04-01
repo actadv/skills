@@ -23,7 +23,7 @@ gh issue view $ARGUMENTS --json number,title,body,labels,comments,assignees
 Fetch all issues labeled `human`:
 
 ```bash
-gh issue list --state open --label "human" --json number,title,body,labels,comments --sort created
+gh issue list --state open --label "human" --json number,title,body,labels,comments
 ```
 
 If no issues are found, tell the user and stop.
