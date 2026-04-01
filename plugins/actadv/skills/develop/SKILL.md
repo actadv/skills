@@ -6,31 +6,88 @@ argument-hint: [max-agents (1-5, default 5)]
 allowed-tools: Bash(gh *), Bash(git *), Agent, Read, Grep, Glob
 ---
 
-You are a development orchestrator. Pick up open GitHub issues and deliver working PRs in parallel.
+You are a development orchestrator. First tend in-progress work, then pick up new issues.
 
-## Step 1 — Find workable issues
+## Step 1 — Tend in-progress issues
+
+```bash
+gh issue list --state open --label "in-progress" --json number,title,body,labels,assignees --limit 20
+```
+
+For each, check for an existing PR:
+
+```bash
+gh pr list --search "head:issue-$NUMBER" --json number,title,url,state,reviews,statusCheckRollup,headRefName --limit 5
+```
+
+- **Has open PR** → spawn a review agent (see below)
+- **No PR/branch** → stalled; remove labels and assignee so it gets re-picked-up:
+  ```bash
+  gh issue edit $NUMBER --remove-label "in-progress" --remove-assignee "@me"
+  ```
+
+### Review agent instructions
+
+For each PR, spawn an **Agent** with `run_in_background: true`:
+
+> You are reviewing PR #$PR_NUMBER for issue #$ISSUE_NUMBER as a senior developer guided by Clean Code principles. Be pragmatic, not pedantic — ignore formatting, import order, and stylistic preferences. Focus on what matters.
+>
+> **a. Read the diff and check CI**
+>
+> ```bash
+> gh pr diff $PR_NUMBER
+> gh pr checks $PR_NUMBER --json name,state,conclusion --jq '.[] | select(.conclusion != "SUCCESS" and .state == "COMPLETED")'
+> ```
+>
+> **b. Review for** (in priority order): correctness and edge cases, clean design (small focused functions, clear names, no unnecessary complexity), test quality, CI failures.
+>
+> **c. Fix what matters**
+>
+> ```bash
+> gh pr checkout $PR_NUMBER
+> ```
+>
+> Make targeted fixes — broken logic, unclear names, bloated functions, missing coverage, CI failures. Commit and push:
+>
+> ```bash
+> git add <specific-files>
+> git commit -m "refactor(#$ISSUE_NUMBER): clean up from review — <short description>"
+> git push
+> ```
+>
+> **d. Approve or escalate**
+>
+> If solid: `gh pr review $PR_NUMBER --approve --body "Reviewed and cleaned up. LGTM."`
+>
+> If fundamentally broken (wrong approach, missing requirements):
+> ```bash
+> gh issue edit $ISSUE_NUMBER --add-label "human" --remove-label "in-progress"
+> gh pr comment $PR_NUMBER --body "Needs human attention: <specific reason>"
+> ```
+
+## Step 2 — Find new workable issues
 
 ```bash
 gh issue list --state open --assignee "" --json number,title,body,labels --sort created --limit 20
 ```
 
-Filter out issues that have the `human` or `in-progress` label. Take the oldest N issues where N is `$ARGUMENTS` (default 5, max 5).
+Filter out `human` and `in-progress` labels. Take the oldest N issues (N = `$ARGUMENTS`, default 5, max 5) minus any review agents spawned in Step 1.
 
-If no workable issues exist, tell the user and stop.
+If no workable issues and no review agents were spawned, tell the user and stop.
 
-## Step 2 — Check for e2e infrastructure
+## Step 3 — Check for e2e infrastructure
 
-Look for `playwright.config.*`, `cypress.config.*`, a `tests/e2e/` or `e2e/` directory. Note whether e2e tests should be written — pass this to each agent.
+Look for `playwright.config.*`, `cypress.config.*`, `tests/e2e/`, or `e2e/`. Note whether e2e tests should be written — pass this to each agent.
 
-## Step 3 — Spawn agents
+## Step 4 — Spawn agents for new issues
 
-For each issue, launch an **Agent** with `isolation: "worktree"` and `run_in_background: true`. Include the issue number, title, full body, and whether e2e tests are expected. Each agent receives the instructions below.
+For each issue, launch an **Agent** with `isolation: "worktree"` and `run_in_background: true`. Include the issue number, title, full body, and whether e2e tests are expected.
 
 ---
 
 ## Agent instructions
 
-You are implementing a single GitHub issue end-to-end. Work autonomously. Write clean, minimal code.
+Implement a single GitHub issue end-to-end. Work autonomously. Write clean, minimal code.
 
 ### a. Claim
 
@@ -46,29 +103,24 @@ git checkout -b issue-$NUMBER-<short-slug>
 
 ### c. Understand
 
-Read the issue carefully. Use Grep, Glob, and Read to explore relevant code. Understand the domain before writing anything.
+Read the issue. Use Grep, Glob, and Read to explore relevant code. Understand the domain before writing anything.
 
 ### d. TDD cycle
 
-1. **Red** — Write a failing test that encodes the requirement.
-2. **Green** — Write the minimum code to pass it.
-3. **Refactor** — Clean up. Small functions, clear names, no duplication, no dead code.
-4. Run the full test suite to confirm nothing is broken.
+1. **Red** — Failing test encoding the requirement.
+2. **Green** — Minimum code to pass.
+3. **Refactor** — Small functions, clear names, no duplication, no dead code.
+4. Run the full test suite.
 
 Repeat for each behavior the issue requires.
 
 ### e. E2e tests
 
-If the orchestrator indicated e2e infrastructure exists, write e2e tests covering the new behavior using the project's existing e2e framework.
+If e2e infrastructure exists, write e2e tests covering the new behavior.
 
 ### f. Clean code gate
 
-Before committing, review your diff. Verify:
-- Every function does one thing
-- No function exceeds ~20 lines
-- No nesting deeper than 2 levels
-- Names reveal intent
-- No commented-out code or TODOs
+Before committing, verify: every function does one thing, no function exceeds ~20 lines, no nesting deeper than 2 levels, names reveal intent, no commented-out code or TODOs.
 
 ### g. Commit, push, PR
 
@@ -87,16 +139,15 @@ gh pr create --title "<title>" --body "Closes #$NUMBER
 
 ### h. CI
 
-Run `gh pr checks <PR_NUMBER> --watch` (timeout 10 min). If checks fail:
-1. Read the failure output.
-2. Fix and push. If the fix fails a second time, create a sub-issue:
-   ```bash
-   gh issue create --title "CI fix needed for #$NUMBER: <failure summary>" --body "Parent: #$NUMBER\n\n<details>" --label "bug"
-   ```
+Run `gh pr checks <PR_NUMBER> --watch` (timeout 10 min). If checks fail, fix and push. If the fix fails again:
+
+```bash
+gh issue create --title "CI fix needed for #$NUMBER: <failure summary>" --body "Parent: #$NUMBER\n\n<details>" --label "bug"
+```
 
 ### i. Stuck? Escalate
 
-If the issue is ambiguous, needs credentials, requires infrastructure changes, or is otherwise unworkable after a good-faith attempt:
+If ambiguous, needs credentials, or requires infrastructure changes:
 
 ```bash
 gh issue edit $NUMBER --add-label "human" --remove-label "in-progress"
@@ -107,12 +158,15 @@ Do NOT guess. Escalate early.
 
 ---
 
-## Step 4 — Report
+## Step 5 — Report
 
-As agents complete, summarize:
-- Issues that got PRs (with PR links)
-- Issues escalated to human (with reasons)
+Summarize:
+- PRs reviewed/approved (links + what was cleaned up)
+- PRs escalated to human (reasons)
+- New PRs created (links)
+- Issues escalated (reasons)
 - CI failures that spawned sub-issues
+- Stalled issues unassigned for re-pickup
 
 ## Rules
 
