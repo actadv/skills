@@ -1,0 +1,12 @@
+{
+  "name": "code-review",
+  "description": "Deep code review and security auditing skills",
+  "version": "1.0.0",
+  "author": {
+    "name": "actadv",
+    "email": "hello@actadv.com"
+  },
+  "repository": "https://github.com/actadv/skills",
+  "license": "MIT",
+  "keywords": ["review", "quality", "security", "audit"]
+}

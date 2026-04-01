@@ -1,0 +1,63 @@
+{
+  "name": "actadv-skills",
+  "owner": {
+    "name": "actadv",
+    "email": "hello@actadv.com"
+  },
+  "metadata": {
+    "description": "A curated marketplace of Claude Code plugins for software development workflows",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "code-review",
+      "source": "./plugins/code-review",
+      "description": "Deep code review and security auditing skills",
+      "version": "1.0.0",
+      "author": { "name": "actadv" },
+      "keywords": ["review", "quality", "security", "audit"],
+      "license": "MIT",
+      "category": "quality"
+    },
+    {
+      "name": "git-workflow",
+      "source": "./plugins/git-workflow",
+      "description": "Smart commits, PR creation, and changelog generation",
+      "version": "1.0.0",
+      "author": { "name": "actadv" },
+      "keywords": ["git", "commit", "pr", "changelog"],
+      "license": "MIT",
+      "category": "workflow"
+    },
+    {
+      "name": "documentation",
+      "source": "./plugins/documentation",
+      "description": "Generate and maintain documentation from code",
+      "version": "1.0.0",
+      "author": { "name": "actadv" },
+      "keywords": ["docs", "documentation", "explain", "readme"],
+      "license": "MIT",
+      "category": "documentation"
+    },
+    {
+      "name": "testing",
+      "source": "./plugins/testing",
+      "description": "Write tests and analyze coverage gaps",
+      "version": "1.0.0",
+      "author": { "name": "actadv" },
+      "keywords": ["test", "coverage", "unit-test", "integration-test"],
+      "license": "MIT",
+      "category": "testing"
+    },
+    {
+      "name": "refactor",
+      "source": "./plugins/refactor",
+      "description": "Guided refactoring and code simplification",
+      "version": "1.0.0",
+      "author": { "name": "actadv" },
+      "keywords": ["refactor", "simplify", "clean-code", "dry"],
+      "license": "MIT",
+      "category": "quality"
+    }
+  ]
+}
