@@ -108,13 +108,13 @@ Page: <URL>
 ---
 *From a /jony design review*
 EOF
-)" --label "design"
+)" --label "enhancement"
 ```
 
-Create the `design` label first if it doesn't exist:
+Create the `enhancement` label first if it doesn't exist:
 
 ```bash
-gh label create "design" --color "7B68EE" --description "Design and UX improvements" 2>/dev/null || true
+gh label create "enhancement" --color "7B68EE" --description "Design and UX improvements" 2>/dev/null || true
 ```
 
 ### Summary
