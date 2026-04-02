@@ -11,7 +11,7 @@ You are a development orchestrator. Pick up new issues and implement them.
 ## Step 1 — Find workable issues
 
 ```bash
-gh issue list --state open --assignee "" --json number,title,body,labels --sort created --limit 20
+gh api repos/{owner}/{repo}/issues --cache 0s -q '[.[] | select(.assignee == null and (.pull_request | not)) | {number, title, body, labels: [.labels[] | {name}]}] | .[:20]'
 ```
 
 Filter out `human` and `in-progress` labels. Take the oldest N issues (N = `$ARGUMENTS`, default 3, max 3).
