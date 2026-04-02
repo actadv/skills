@@ -1,6 +1,6 @@
 ---
 name: loopit
-description: Start a continuous development loop — runs /develop and /pr-review every 15 minutes and /bob-review once daily
+description: Start a continuous development loop — runs /develop, /pr-review, and /e2e every 15 minutes and /bob-review once daily
 user-invocable: true
 argument-hint: [start|stop|status]
 allowed-tools: CronCreate, CronDelete, CronList, Skill
@@ -12,7 +12,7 @@ You orchestrate recurring development and review schedules.
 
 ### stop
 
-`CronList`, then `CronDelete` every job whose prompt contains `/develop`, `/pr-review`, or `/bob-review`. Confirm what was stopped.
+`CronList`, then `CronDelete` every job whose prompt contains `/develop`, `/pr-review`, `/e2e`, or `/bob-review`. Confirm what was stopped.
 
 ### status
 
@@ -22,11 +22,12 @@ You orchestrate recurring development and review schedules.
 
 First `CronList` to check for duplicates — skip creation if already running.
 
-Create three schedules:
+Create four schedules:
 
 ```
 CronCreate  cron: "*/15 * * * *"  prompt: "/develop"     recurring: true
-CronCreate  cron: "*/15 * * * *"  prompt: "/pr-review"    recurring: true
+CronCreate  cron: "*/15 * * * *"  prompt: "/pr-review"   recurring: true
+CronCreate  cron: "*/15 * * * *"  prompt: "/e2e"         recurring: true
 CronCreate  cron: "17 9 * * *"    prompt: "/bob-review"  recurring: true
 ```
 
