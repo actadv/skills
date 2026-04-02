@@ -25,9 +25,9 @@ First `CronList` to check for duplicates — skip creation if already running.
 Create four schedules:
 
 ```
-CronCreate  cron: "*/15 * * * *"  prompt: "/develop"     recurring: true
-CronCreate  cron: "*/15 * * * *"  prompt: "/pr-review"   recurring: true
-CronCreate  cron: "*/15 * * * *"  prompt: "/e2e"         recurring: true
+CronCreate  cron: "10,25,40,55 * * * *"  prompt: "/develop"     recurring: true
+CronCreate  cron: "10,25,40,55 * * * *"  prompt: "/pr-review"   recurring: true
+CronCreate  cron: "10,25,40,55 * * * *"  prompt: "/e2e"         recurring: true
 CronCreate  cron: "17 9 * * *"    prompt: "/bob-review"  recurring: true
 ```
 
