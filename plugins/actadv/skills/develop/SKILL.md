@@ -21,7 +21,7 @@ If the answer is "no" (exit code 1), tell the user the global agent limit is rea
 ## Step 1 — Find workable issues
 
 ```bash
-gh api repos/{owner}/{repo}/issues --cache 0s -q '[.[] | select(.assignee == null and (.pull_request | not)) | {number, title, body, labels: [.labels[] | {name}]}] | .[:20]'
+gh api repos/{owner}/{repo}/issues --cache 0s --paginate -q '[.[] | select(.assignee == null and (.pull_request | not)) | {number, title, body, labels: [.labels[] | {name}]}]'
 ```
 
 Filter out `human` and `in-progress` labels. Take the oldest N issues (N = `$ARGUMENTS`, default 3, max 3).
