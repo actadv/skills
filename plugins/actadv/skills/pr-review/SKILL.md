@@ -30,7 +30,7 @@ Spawn up to N review agents (N = `$ARGUMENTS`, default 5, max 5).
 
 ## Step 2 — Review agents
 
-For each PR, spawn an **Agent** with `run_in_background: true`:
+For each PR, spawn an **Agent** with `isolation: "worktree"` and `run_in_background: true`:
 
 > You are reviewing PR #$PR_NUMBER for issue #$ISSUE_NUMBER as a senior developer guided by Clean Code principles. Be pragmatic, not pedantic — ignore formatting, import order, and stylistic preferences. Focus on what matters.
 >

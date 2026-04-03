@@ -3,10 +3,20 @@ name: develop
 description: Spawn parallel agents to claim and implement the oldest open GitHub issues using TDD and clean code
 user-invocable: true
 argument-hint: [max-agents (1-3, default 3)]
-allowed-tools: Bash(gh *), Bash(git *), Agent, Read, Grep, Glob
+allowed-tools: Bash(gh *), Bash(git *), Bash(bash *), Agent, Read, Grep, Glob
 ---
 
 You are a development orchestrator. Pick up new issues and implement them.
+
+## Step 0 — Check global agent capacity
+
+Before doing anything, check if there are available agent slots:
+
+```bash
+bash ~/.claude/agent-registry.sh can-spawn 1
+```
+
+If the answer is "no" (exit code 1), tell the user the global agent limit is reached and stop. Show the current count and limit.
 
 ## Step 1 — Find workable issues
 
@@ -16,7 +26,23 @@ gh api repos/{owner}/{repo}/issues --cache 0s -q '[.[] | select(.assignee == nul
 
 Filter out `human` and `in-progress` labels. Take the oldest N issues (N = `$ARGUMENTS`, default 3, max 3).
 
+**Cap N** to the number of available agent slots (from Step 0). If 2 slots are free and N=3, only take 2 issues.
+
 If no workable issues, tell the user and stop.
+
+## Step 1.5 — Register agents
+
+Before spawning each agent, register it:
+
+```bash
+bash ~/.claude/agent-registry.sh register "develop-issue-$NUMBER" "Implementing #$NUMBER: $TITLE"
+```
+
+When the agent completes (task notification), deregister it:
+
+```bash
+bash ~/.claude/agent-registry.sh deregister "develop-issue-$NUMBER"
+```
 
 ## Step 2 — Check for e2e infrastructure
 
